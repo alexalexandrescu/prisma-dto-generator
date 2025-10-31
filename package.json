@@ -1,0 +1,68 @@
+{
+	"name": "prisma-nestjs-dto-generator",
+	"version": "0.1.0",
+	"description": "Prisma generator for generating NestJS DTOs with Swagger/OpenAPI decorators and validation",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"bin": "dist/index.js",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsc --watch",
+		"test": "jest",
+		"lint": "biome check .",
+		"format": "biome format --write .",
+		"prepublishOnly": "pnpm run build",
+		"prepare": "husky",
+		"changelog": "node scripts/generate-changelog.js"
+	},
+	"packageManager": "pnpm@9.15.0",
+	"keywords": [
+		"prisma",
+		"generator",
+		"nestjs",
+		"dto",
+		"swagger",
+		"openapi",
+		"class-validator",
+		"class-transformer",
+		"typescript"
+	],
+	"author": "Conversy",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/conversy/prisma-nestjs-dto-generator.git"
+	},
+	"bugs": {
+		"url": "https://github.com/conversy/prisma-nestjs-dto-generator/issues"
+	},
+	"homepage": "https://github.com/conversy/prisma-nestjs-dto-generator#readme",
+	"peerDependencies": {
+		"prisma": "^6.0.0 || ^7.0.0"
+	},
+	"dependencies": {
+		"@prisma/generator-helper": "^6.16.3",
+		"@prisma/internals": "^6.16.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@commitlint/cli": "^19.6.0",
+		"@commitlint/config-conventional": "^19.6.0",
+		"@types/jest": "^29.5.12",
+		"@types/node": "^24.6.1",
+		"husky": "^9.1.7",
+		"jest": "^29.7.0",
+		"ts-jest": "^29.2.5",
+		"typescript": "^5.9.3"
+	},
+	"files": ["dist/**/*", "README.md", "CHANGELOG.md"],
+	"engines": {
+		"node": ">=18.0.0"
+	}
+}
