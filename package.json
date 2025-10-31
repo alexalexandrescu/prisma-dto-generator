@@ -15,6 +15,8 @@
 		"build": "tsc",
 		"dev": "tsc --watch",
 		"test": "jest",
+		"test:coverage": "jest --coverage",
+		"test:coverage:watch": "jest --coverage --watch",
 		"lint": "biome check .",
 		"format": "biome format --write .",
 		"prepublishOnly": "pnpm run build",

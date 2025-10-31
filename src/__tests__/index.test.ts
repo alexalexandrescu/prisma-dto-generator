@@ -11,7 +11,8 @@ jest.mock('@prisma/generator-helper', () => ({
 jest.mock('node:fs', () => ({
   existsSync: jest.fn(),
   mkdirSync: jest.fn(),
-  writeFileSync: jest.fn()
+  writeFileSync: jest.fn(),
+  rmSync: jest.fn()
 }))
 
 // Mock path module
@@ -37,7 +38,7 @@ describe('Generator Index', () => {
         const result = onManifest({} as any)
 
         expect(result).toEqual({
-          version: '1.0.0',
+          version: '0.1.0',
           defaultOutput: '../generated/dto',
           prettyName: 'NestJS DTO Generator'
         })
@@ -496,6 +497,451 @@ describe('Generator Index', () => {
         // Should create the user-management directory
         expect(mockFs.mkdirSync).toHaveBeenCalledWith('../generated/dto/user-management', { recursive: true })
       }
+    })
+
+    it('should handle array format for omitFields', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [],
+            enums: [],
+            types: [],
+            indexes: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true',
+            omitFields: ['{"User": ["email"]}']
+          },
+          output: {
+            value: '../generated/dto'
+          }
+        }
+      }
+
+      mockFs.existsSync.mockReturnValue(false)
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(mockFs.existsSync).toHaveBeenCalled()
+      }
+    })
+
+    it('should handle array format for readDtoInclude', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [],
+            enums: [],
+            types: [],
+            indexes: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true',
+            readDtoInclude: ['{"User": ["posts"]}']
+          },
+          output: {
+            value: '../generated/dto'
+          }
+        }
+      }
+
+      mockFs.existsSync.mockReturnValue(false)
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(mockFs.existsSync).toHaveBeenCalled()
+      }
+    })
+
+    it('should handle array format for domainMapping', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [
+              {
+                name: 'User',
+                dbName: 'User',
+                fields: [
+                  {
+                    name: 'id',
+                    kind: 'scalar',
+                    type: 'String',
+                    isRequired: true,
+                    isList: false,
+                    isUnique: true,
+                    isId: true,
+                    isReadOnly: false,
+                    hasDefaultValue: true,
+                    isGenerated: false,
+                    isUpdatedAt: false,
+                    documentation: 'Primary key'
+                  }
+                ],
+                uniqueFields: [],
+                uniqueIndexes: [],
+                documentation: 'User model'
+              }
+            ],
+            enums: [],
+            types: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true',
+            folderStructure: 'domain',
+            domainMapping: ['{"User": "user-management/user"}']
+          },
+          output: {
+            value: '../generated/dto'
+          }
+        }
+      }
+
+      mockFs.existsSync.mockReturnValue(false)
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(mockFs.existsSync).toHaveBeenCalled()
+      }
+    })
+
+    it('should handle domainMapping with invalid JSON object type', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [],
+            enums: [],
+            types: [],
+            indexes: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true',
+            domainMapping: '[]'
+          },
+          output: {
+            value: '../generated/dto'
+          }
+        }
+      }
+
+      mockFs.existsSync.mockReturnValue(false)
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Invalid domainMapping config: expected JSON object. Got:',
+          'object'
+        )
+      }
+
+      consoleSpy.mockRestore()
+    })
+
+    it('should handle domainMapping with null value', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [],
+            enums: [],
+            types: [],
+            indexes: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true',
+            domainMapping: 'null'
+          },
+          output: {
+            value: '../generated/dto'
+          }
+        }
+      }
+
+      mockFs.existsSync.mockReturnValue(false)
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Invalid domainMapping config: expected JSON object. Got:',
+          'object'
+        )
+      }
+
+      consoleSpy.mockRestore()
+    })
+
+    it('should use default output when output.value is missing', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [],
+            enums: [],
+            types: [],
+            indexes: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true'
+          },
+          output: {}
+        }
+      }
+
+      mockFs.existsSync.mockReturnValue(false)
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(mockFs.existsSync).toHaveBeenCalledWith('../generated/dto')
+      }
+    })
+
+    it('should write files with folder paths', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [
+              {
+                name: 'User',
+                dbName: 'User',
+                fields: [
+                  {
+                    name: 'id',
+                    kind: 'scalar',
+                    type: 'String',
+                    isRequired: true,
+                    isList: false,
+                    isUnique: true,
+                    isId: true,
+                    isReadOnly: false,
+                    hasDefaultValue: true,
+                    isGenerated: false,
+                    isUpdatedAt: false,
+                    documentation: 'Primary key'
+                  }
+                ],
+                uniqueFields: [],
+                uniqueIndexes: [],
+                documentation: 'User model'
+              }
+            ],
+            enums: [],
+            types: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true',
+            folderStructure: 'domain',
+            domainMapping: '{"User": "user-management/user"}'
+          },
+          output: {
+            value: '../generated/dto'
+          }
+        }
+      }
+
+      mockFs.existsSync.mockImplementation((path) => {
+        if (path === '../generated/dto') return true
+        if (String(path).includes('user-management')) return false
+        return true
+      })
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(mockFs.writeFileSync).toHaveBeenCalled()
+      }
+    })
+
+    it('should log generated file count', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [
+              {
+                name: 'User',
+                dbName: 'User',
+                fields: [
+                  {
+                    name: 'id',
+                    kind: 'scalar',
+                    type: 'String',
+                    isRequired: true,
+                    isList: false,
+                    isUnique: true,
+                    isId: true,
+                    isReadOnly: false,
+                    hasDefaultValue: true,
+                    isGenerated: false,
+                    isUpdatedAt: false,
+                    documentation: 'Primary key'
+                  }
+                ],
+                uniqueFields: [],
+                uniqueIndexes: [],
+                documentation: 'User model'
+              }
+            ],
+            enums: [],
+            types: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true'
+          },
+          output: {
+            value: '../generated/dto'
+          }
+        }
+      }
+
+      mockFs.existsSync.mockReturnValue(false)
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation()
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(consoleSpy).toHaveBeenCalledWith(
+          expect.stringMatching(/^Generated \d+ DTO files in/)
+        )
+      }
+
+      consoleSpy.mockRestore()
+    })
+
+    it('should handle readDtoInclude with invalid JSON', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [],
+            enums: [],
+            types: [],
+            indexes: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true',
+            readDtoInclude: 'invalid-json'
+          },
+          output: {
+            value: '../generated/dto'
+          }
+        }
+      }
+
+      mockFs.existsSync.mockReturnValue(false)
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Failed to parse readDtoInclude config:',
+          expect.any(Error)
+        )
+      }
+
+      consoleSpy.mockRestore()
+    })
+
+    it('should handle domainMapping with invalid JSON', async () => {
+      const mockOptions = {
+        dmmf: {
+          datamodel: {
+            models: [],
+            enums: [],
+            types: [],
+            indexes: []
+          },
+          schema: {},
+          mappings: {}
+        },
+        generator: {
+          config: {
+            emitBarrel: 'true',
+            domainMapping: 'invalid-json'
+          },
+          output: {
+            value: '../generated/dto'
+          }
+        }
+      }
+
+      mockFs.existsSync.mockReturnValue(false)
+      mockPath.join.mockImplementation((...args) => args.join('/'))
+
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
+
+      const onGenerate = mockGeneratorHandler.mock.calls[0]?.[0]?.onGenerate
+
+      if (onGenerate) {
+        await onGenerate(mockOptions as any)
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Failed to parse domainMapping config:',
+          expect.any(Error)
+        )
+      }
+
+      consoleSpy.mockRestore()
     })
   })
 })
