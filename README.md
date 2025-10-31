@@ -322,6 +322,43 @@ The generated DTOs are fully typed and work seamlessly with:
 - **class-validator** for request validation
 - **class-transformer** for data transformation
 
+## Testing
+
+This project maintains **100% test coverage** across all source files. Tests are written using Jest and cover all functionality including edge cases and error handling.
+
+### Running Tests
+
+```bash
+# Run tests
+pnpm test
+
+# Run tests with coverage
+pnpm test:coverage
+
+# Run tests in watch mode with coverage
+pnpm test:coverage:watch
+```
+
+### Test Coverage
+
+The project uses Jest with the following coverage thresholds:
+- **Statements**: 100%
+- **Branches**: 100%
+- **Functions**: 100%
+- **Lines**: 100%
+
+Coverage reports are generated in multiple formats:
+- Text output (console)
+- HTML (in `coverage/index.html`)
+- JSON (for CI/CD integration)
+- LCOV (for coverage services)
+
+You can view the HTML coverage report by opening `coverage/index.html` in your browser after running `pnpm test:coverage`.
+
+### Coverage Badge
+
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+
 ## Troubleshooting
 
 ### Generator Not Found
