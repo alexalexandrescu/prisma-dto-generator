@@ -1,0 +1,59 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"organizeImports": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": {
+					"level": "warn"
+				}
+			},
+			"complexity": {
+				"noForEach": {
+					"level": "warn"
+				}
+			}
+		}
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single"
+		}
+	},
+	"files": {
+		"ignore": ["node_modules/**", "dist/**", "coverage/**", "*.tsbuildinfo"]
+	},
+	"overrides": [
+		{
+			"include": ["**/*.test.ts", "**/__tests__/**"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noExplicitAny": "off"
+					},
+					"complexity": {
+						"noForEach": "off"
+					}
+				}
+			}
+		},
+		{
+			"include": ["src/type-mapper.ts", "scripts/**"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noForEach": "warn"
+					}
+				}
+			}
+		}
+	]
+}
