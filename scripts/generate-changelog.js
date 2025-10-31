@@ -32,7 +32,11 @@ function getCommits(fromTag, toRef = 'HEAD') {
 // Parse conventional commit
 function parseCommit(commit) {
 	const { subject, body } = commit;
-	const breaking = body.includes('BREAKING CHANGE') || subject.includes('!');
+	
+	// Skip commits without a subject
+	if (!subject) return null;
+	
+	const breaking = (body && body.includes('BREAKING CHANGE')) || subject.includes('!');
 
 	const typeMatch = subject.match(/^(\w+)(!)?(:|$)/);
 	if (!typeMatch) return null;
