@@ -206,16 +206,18 @@ export class ${className} {
         }
       }
 
-      // Generate domain index file
-      for (const [subfolder] of subfolderGroups) {
-        exports.push(`export * from './${subfolder}';`)
-      }
+      // Generate domain index file only if there are subfolders
+      if (subfolderGroups.size > 0) {
+        for (const [subfolder] of subfolderGroups) {
+          exports.push(`export * from './${subfolder}';`)
+        }
 
-      files.push({
-        fileName: 'index.ts',
-        content: exports.join('\n'),
-        folderPath: domain
-      })
+        files.push({
+          fileName: 'index.ts',
+          content: exports.join('\n'),
+          folderPath: domain
+        })
+      }
 
       // Generate subfolder index files
       for (const [subfolder, modelNames] of subfolderGroups) {

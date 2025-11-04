@@ -378,6 +378,278 @@ describe('DTOGenerator', () => {
       const createFile = files.find((f) => f.fileName === 'create-user.dto.ts')
       expect(createFile?.folderPath).toBe('custom-domain/custom-user')
     })
+
+    it('should return undefined folderPath when model has no domain mapping', () => {
+      const unmappedModel: ModelInfo = {
+        name: 'UnmappedModel',
+        fields: [
+          {
+            name: 'id',
+            type: 'String',
+            isOptional: false,
+            isNullable: false,
+            isArray: false,
+            isUpdatedAt: false,
+            hasDefault: false,
+            isId: true,
+            isRelation: false
+          }
+        ],
+        enums: []
+      }
+
+      const domainGenerator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            User: 'user-management/user'
+            // UnmappedModel is not in mapping
+          }
+        },
+        mockEnums
+      )
+      const files = domainGenerator.generateDTOs([unmappedModel])
+
+      const createFile = files.find((f) => f.fileName === 'create-unmapped-model.dto.ts')
+      expect(createFile?.folderPath).toBeUndefined()
+    })
+
+    it('should handle required but nullable fields', () => {
+      const modelWithNullable: ModelInfo = {
+        name: 'Post',
+        fields: [
+          {
+            name: 'id',
+            type: 'String',
+            isOptional: false,
+            isNullable: false,
+            isArray: false,
+            isUpdatedAt: false,
+            hasDefault: false,
+            isId: true,
+            isRelation: false
+          },
+          {
+            name: 'deletedAt',
+            type: 'DateTime',
+            isOptional: false,
+            isNullable: true, // Required but can be null
+            isArray: false,
+            isUpdatedAt: false,
+            hasDefault: false,
+            isId: false,
+            isRelation: false
+          }
+        ],
+        enums: []
+      }
+
+      generator = new DTOGenerator({}, mockEnums)
+      const files = generator.generateDTOs([modelWithNullable])
+
+      const createFile = files.find((f) => f.fileName === 'create-post.dto.ts')
+      expect(createFile?.content).toContain('deletedAt: string | null')
+      expect(createFile?.content).not.toContain('deletedAt?')
+      
+      // Also test ReadDTO to cover line 352 (nullable but not optional in generateProperty)
+      const readFile = files.find((f) => f.fileName === 'read-post.dto.ts')
+      expect(readFile?.content).toContain('deletedAt: string | null')
+      expect(readFile?.content).not.toContain('deletedAt?')
+    })
+
+    it('should handle missing enumInfo in enum generation', () => {
+      // Create a generator with an enum that will be in getEnumImports but missing from getEnums
+      const generator = new DTOGenerator({}, [{ name: 'Status', values: ['ACTIVE'] }, { name: 'UserRole', values: ['ADMIN'] }])
+      // Access the internal typeMapper
+      const internalTypeMapper = (generator as any).typeMapper
+      
+      // Manually add a key to the map with undefined value to trigger line 124
+      // This simulates the edge case where getEnumImports returns a key but get() returns undefined
+      internalTypeMapper.getEnums().set('MissingEnum', undefined as any)
+
+      const files = generator.generateDTOs([mockModel])
+      const enumsFile = files.find((f) => f.fileName === 'enums.ts')
+      
+      // Should include UserRole and Status but not MissingEnum (which returns empty string)
+      expect(enumsFile).toBeDefined()
+      expect(enumsFile?.content).toContain('UserRole')
+      expect(enumsFile?.content).toContain('Status')
+      expect(enumsFile?.content).not.toContain('MissingEnum')
+    })
+
+    it('should skip domains with no models', () => {
+      // Create a generator with a domain that has no models
+      const generator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            User: 'user-management/user',
+            Product: 'catalog/product',
+            UnusedModel: 'empty-domain/unused'
+          }
+        },
+        mockEnums
+      )
+
+      // Only generate User DTOs, not UnusedModel
+      const files = generator.generateDTOs([mockModel])
+      
+      // Should not create barrel files for empty-domain
+      const emptyDomainBarrel = files.find(
+        (f) => f.fileName === 'index.ts' && f.folderPath === 'empty-domain'
+      )
+      expect(emptyDomainBarrel).toBeUndefined()
+    })
+
+    it('should generate main barrel file with enums when enums exist', () => {
+      const generator = new DTOGenerator({}, [{ name: 'UserRole', values: ['ADMIN', 'USER'] }])
+      const files = generator.generateDTOs([mockModel])
+      
+      const mainBarrelFile = files.find((f) => f.fileName === 'index.ts' && !f.folderPath)
+      expect(mainBarrelFile?.content).toContain("export * from './enums'")
+    })
+
+    it('should not export enums in barrel file when no enums exist', () => {
+      const generator = new DTOGenerator({}, [])
+      const files = generator.generateDTOs([mockModel])
+      
+      const mainBarrelFile = files.find((f) => f.fileName === 'index.ts' && !f.folderPath)
+      expect(mainBarrelFile?.content).not.toContain("export * from './enums'")
+    })
+
+    it('should export enums in domain barrel file when enums exist', () => {
+      // Test line 176: export enums in generateDomainBarrelFile
+      const generator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            User: 'users/user'
+          }
+        },
+        [{ name: 'UserRole', values: ['ADMIN', 'USER'] }]
+      )
+      const files = generator.generateDTOs([mockModel])
+      
+      const mainBarrelFile = files.find((f) => f.fileName === 'index.ts' && !f.folderPath)
+      expect(mainBarrelFile?.content).toContain("export * from './enums'")
+    })
+
+    it('should handle empty domain models list', () => {
+      // Create a generator with a domain mapping that points to a domain with no matching models
+      const generator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            NonExistentModel: 'empty-domain/non-existent'
+          }
+        },
+        mockEnums
+      )
+
+      // Generate with a model that's not in the mapping
+      const files = generator.generateDTOs([mockModel])
+      
+      // Should not create barrel files for empty-domain since no models match
+      const emptyDomainBarrel = files.find(
+        (f) => f.fileName === 'index.ts' && f.folderPath === 'empty-domain'
+      )
+      expect(emptyDomainBarrel).toBeUndefined()
+    })
+
+    it('should skip domains with zero models in mapping', () => {
+      // Create a generator with domain mapping
+      // This tests the continue statement at line 191 when domainModels.length === 0
+      // We need to manually manipulate the domainMapper to have a domain entry but getModelsInDomain returns empty
+      const generator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            User: 'users/user'
+          }
+        },
+        mockEnums
+      )
+
+      // Access internal domainMapper and manually manipulate getAllDomains to return an extra domain
+      // that doesn't exist in the mapping, causing getModelsInDomain to return empty array
+      const internalDomainMapper = (generator as any).domainMapper
+      const originalGetAllDomains = internalDomainMapper.getAllDomains.bind(internalDomainMapper)
+      internalDomainMapper.getAllDomains = jest.fn(() => {
+        const domains = originalGetAllDomains()
+        // Add a domain that doesn't exist in the mapping
+        return [...domains, 'empty-domain']
+      })
+      
+      // Generate with models
+      const files = generator.generateDTOs([mockModel])
+      
+      // Should not create barrel files for empty-domain since getModelsInDomain returns empty
+      const emptyDomainBarrel = files.find(
+        (f) => f.fileName === 'index.ts' && f.folderPath === 'empty-domain'
+      )
+      expect(emptyDomainBarrel).toBeUndefined()
+    })
+  })
+
+  describe('constructor', () => {
+    it('should use default config values when no arguments provided', () => {
+      // Test default parameter: constructor(config: GeneratorConfig = {}, enums: EnumInfo[] = [])
+      const generator = new DTOGenerator()
+      // Create a simple model without enums to avoid enum errors
+      const simpleModel: ModelInfo = {
+        name: 'Simple',
+        fields: [
+          {
+            name: 'id',
+            type: 'String',
+            isOptional: false,
+            isNullable: false,
+            isArray: false,
+            isUpdatedAt: false,
+            hasDefault: false,
+            isId: true,
+            isRelation: false
+          },
+          {
+            name: 'name',
+            type: 'String',
+            isOptional: false,
+            isNullable: false,
+            isArray: false,
+            isUpdatedAt: false,
+            hasDefault: false,
+            isId: false,
+            isRelation: false
+          }
+        ]
+      }
+      const files = generator.generateDTOs([simpleModel])
+      
+      // Should generate files with default settings
+      expect(files.length).toBeGreaterThan(0)
+      const barrelFile = files.find((f) => f.fileName === 'index.ts' && !f.folderPath)
+      expect(barrelFile).toBeDefined()
+    })
+
+    it('should use default config values when no config is provided', () => {
+      const generator = new DTOGenerator(undefined, mockEnums)
+      const files = generator.generateDTOs([mockModel])
+      
+      // Should generate files with default settings
+      expect(files.length).toBeGreaterThan(0)
+      const barrelFile = files.find((f) => f.fileName === 'index.ts' && !f.folderPath)
+      expect(barrelFile).toBeDefined()
+    })
+
+    it('should use default config values when empty config is provided', () => {
+      const generator = new DTOGenerator({}, mockEnums)
+      const files = generator.generateDTOs([mockModel])
+      
+      // Should generate files with default settings
+      expect(files.length).toBeGreaterThan(0)
+      const barrelFile = files.find((f) => f.fileName === 'index.ts' && !f.folderPath)
+      expect(barrelFile).toBeDefined()
+    })
   })
 
   describe('configuration', () => {

@@ -12,6 +12,14 @@ describe('TypeMapper', () => {
     typeMapper = new TypeMapper(mockEnums)
   })
 
+  describe('constructor', () => {
+    it('should use default empty array when no enums provided', () => {
+      const mapper = new TypeMapper()
+      expect(mapper.getEnums().size).toBe(0)
+      expect(mapper.getEnumImports()).toEqual([])
+    })
+  })
+
   describe('mapField', () => {
     it('should map string field correctly', () => {
       const field: FieldInfo = {
@@ -287,6 +295,204 @@ describe('TypeMapper', () => {
       }
 
       expect(() => typeMapper.mapField(field)).toThrow('Enum UnknownEnum not found')
+    })
+
+    it('should map BigInt field correctly', () => {
+      const field: FieldInfo = {
+        name: 'bigNumber',
+        type: 'BigInt',
+        isOptional: false,
+        isNullable: false,
+        isArray: false,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: false
+      }
+
+      const result = typeMapper.mapField(field)
+
+      expect(result).toEqual({
+        tsType: 'string',
+        swaggerType: 'string',
+        swaggerFormat: 'bigint',
+        validator: 'IsString',
+        isOptional: false,
+        isNullable: false,
+        isArray: false
+      })
+    })
+
+    it('should map Float field correctly', () => {
+      const field: FieldInfo = {
+        name: 'price',
+        type: 'Float',
+        isOptional: false,
+        isNullable: false,
+        isArray: false,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: false
+      }
+
+      const result = typeMapper.mapField(field)
+
+      expect(result).toEqual({
+        tsType: 'number',
+        swaggerType: 'number',
+        swaggerFormat: 'float',
+        validator: 'IsNumber',
+        isOptional: false,
+        isNullable: false,
+        isArray: false
+      })
+    })
+
+    it('should map Decimal field correctly', () => {
+      const field: FieldInfo = {
+        name: 'amount',
+        type: 'Decimal',
+        isOptional: false,
+        isNullable: false,
+        isArray: false,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: false
+      }
+
+      const result = typeMapper.mapField(field)
+
+      expect(result).toEqual({
+        tsType: 'string',
+        swaggerType: 'string',
+        swaggerFormat: 'decimal',
+        validator: 'IsString',
+        isOptional: false,
+        isNullable: false,
+        isArray: false
+      })
+    })
+
+    it('should map Bytes field correctly', () => {
+      const field: FieldInfo = {
+        name: 'data',
+        type: 'Bytes',
+        isOptional: false,
+        isNullable: false,
+        isArray: false,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: false
+      }
+
+      const result = typeMapper.mapField(field)
+
+      expect(result).toEqual({
+        tsType: 'string',
+        swaggerType: 'string',
+        swaggerFormat: 'byte',
+        validator: 'IsString',
+        isOptional: false,
+        isNullable: false,
+        isArray: false
+      })
+    })
+
+    it('should map URL field with IsUrl validator', () => {
+      const field: FieldInfo = {
+        name: 'websiteUrl',
+        type: 'String',
+        isOptional: false,
+        isNullable: false,
+        isArray: false,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: false
+      }
+
+      const result = typeMapper.mapField(field)
+
+      expect(result).toEqual({
+        tsType: 'string',
+        swaggerType: 'string',
+        validator: 'IsUrl',
+        isOptional: false,
+        isNullable: false,
+        isArray: false
+      })
+    })
+
+    it('should map unknown type with fallback', () => {
+      const field: FieldInfo = {
+        name: 'customField',
+        type: 'UnknownType' as any,
+        isOptional: false,
+        isNullable: false,
+        isArray: false,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: false
+      }
+
+      const result = typeMapper.mapField(field)
+
+      expect(result).toEqual({
+        tsType: 'any',
+        swaggerType: 'string',
+        validator: 'IsString',
+        isOptional: false,
+        isNullable: false,
+        isArray: false
+      })
+    })
+
+    it('should handle enum not found after Map.get returns undefined', () => {
+      // Create a TypeMapper with empty enums
+      const emptyMapper = new TypeMapper([])
+      const field: FieldInfo = {
+        name: 'role',
+        type: 'UserRole',
+        isOptional: false,
+        isNullable: false,
+        isArray: false,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: false,
+        enumName: 'UserRole'
+      }
+
+      // This should trigger the first error throw (line 30)
+      expect(() => emptyMapper.mapField(field)).toThrow('Enum UserRole not found')
+    })
+
+    it('should handle enum not found when Map.get returns undefined despite has() returning true', () => {
+      // Create a TypeMapper and manually manipulate the Map to create edge case
+      const mapper = new TypeMapper([{ name: 'UserRole', values: ['ADMIN'] }])
+      const field: FieldInfo = {
+        name: 'role',
+        type: 'UserRole',
+        isOptional: false,
+        isNullable: false,
+        isArray: false,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: false,
+        enumName: 'UserRole'
+      }
+
+      // Manually set the value to undefined to trigger line 34
+      const enumsMap = mapper.getEnums()
+      enumsMap.set('UserRole', undefined as any)
+
+      // This should trigger the second error throw (line 34)
+      expect(() => mapper.mapField(field)).toThrow('Enum UserRole not found')
     })
   })
 

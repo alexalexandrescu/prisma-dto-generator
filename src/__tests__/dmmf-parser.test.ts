@@ -70,6 +70,35 @@ describe('DMMFParser', () => {
       const result = parser.parse(mockDMMF)
       expect(result.enums).toEqual([])
     })
+
+    it('should handle model with no fields', () => {
+      const mockDMMF: DMMF.Document = {
+        datamodel: {
+          models: [
+            {
+              name: 'EmptyModel',
+              dbName: 'EmptyModel',
+              schema: 'public',
+              primaryKey: { name: 'EmptyModel_pkey', fields: [] },
+              fields: [],
+              uniqueFields: [],
+              uniqueIndexes: [],
+              documentation: 'Empty model'
+            }
+          ],
+          enums: [],
+          types: [],
+          indexes: []
+        },
+        schema: {} as any,
+        mappings: {} as any
+      }
+
+      const result = parser.parse(mockDMMF)
+      expect(result.models).toHaveLength(1)
+      expect(result.models[0].fields).toEqual([])
+      expect(result.models[0].enums).toEqual([])
+    })
   })
 
   describe('parse models through full DMMF', () => {
@@ -238,6 +267,158 @@ describe('DMMFParser', () => {
         relationName: undefined,
         relationType: undefined
       })
+    })
+
+    it('should parse relation fields correctly', () => {
+      const mockDMMF: DMMF.Document = {
+        datamodel: {
+          models: [
+            {
+              name: 'User',
+              dbName: 'User',
+              schema: 'public',
+              primaryKey: { name: 'User_pkey', fields: ['id'] },
+              fields: [
+                {
+                  name: 'id',
+                  kind: 'scalar',
+                  type: 'String',
+                  isRequired: true,
+                  isList: false,
+                  isUnique: true,
+                  isId: true,
+                  isReadOnly: false,
+                  hasDefaultValue: true,
+                  isGenerated: false,
+                  isUpdatedAt: false,
+                  documentation: 'Primary key'
+                },
+                {
+                  name: 'posts',
+                  kind: 'object',
+                  type: 'Post',
+                  isRequired: true,
+                  isList: true,
+                  isUnique: false,
+                  isId: false,
+                  isReadOnly: false,
+                  hasDefaultValue: false,
+                  isGenerated: false,
+                  isUpdatedAt: false,
+                  relationName: 'PostToUser',
+                  relationFromFields: [],
+                  relationToFields: []
+                },
+                {
+                  name: 'profile',
+                  kind: 'object',
+                  type: 'Profile',
+                  isRequired: false,
+                  isList: false,
+                  isUnique: false,
+                  isId: false,
+                  isReadOnly: false,
+                  hasDefaultValue: false,
+                  isGenerated: false,
+                  isUpdatedAt: false,
+                  relationName: 'ProfileToUser',
+                  relationFromFields: [],
+                  relationToFields: []
+                }
+              ],
+              uniqueFields: [],
+              uniqueIndexes: [],
+              documentation: 'User model'
+            }
+          ],
+          enums: [],
+          types: [],
+          indexes: []
+        },
+        schema: {} as any,
+        mappings: {} as any
+      }
+
+      const result = parser.parse(mockDMMF)
+
+      const postsField = result.models[0].fields.find((f) => f.name === 'posts')
+      const profileField = result.models[0].fields.find((f) => f.name === 'profile')
+
+      expect(postsField).toEqual({
+        name: 'posts',
+        type: 'Post',
+        isOptional: false,
+        isNullable: false,
+        isArray: true,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: true,
+        relationName: 'PostToUser',
+        relationType: 'many',
+        enumName: undefined,
+        enumValues: undefined
+      })
+
+      expect(profileField).toEqual({
+        name: 'profile',
+        type: 'Profile',
+        isOptional: true,
+        isNullable: false, // Relations are not nullable, only scalar fields can be nullable
+        isArray: false,
+        isUpdatedAt: false,
+        hasDefault: false,
+        isId: false,
+        isRelation: true,
+        relationName: 'ProfileToUser',
+        relationType: 'one',
+        enumName: undefined,
+        enumValues: undefined
+      })
+    })
+
+    it('should handle field with undefined isUpdatedAt', () => {
+      const mockDMMF: DMMF.Document = {
+        datamodel: {
+          models: [
+            {
+              name: 'User',
+              dbName: 'User',
+              schema: 'public',
+              primaryKey: { name: 'User_pkey', fields: ['id'] },
+              fields: [
+                {
+                  name: 'id',
+                  kind: 'scalar',
+                  type: 'String',
+                  isRequired: true,
+                  isList: false,
+                  isUnique: true,
+                  isId: true,
+                  isReadOnly: false,
+                  hasDefaultValue: true,
+                  isGenerated: false,
+                  isUpdatedAt: undefined as any, // Explicitly undefined
+                  documentation: 'Primary key'
+                }
+              ],
+              uniqueFields: [],
+              uniqueIndexes: [],
+              documentation: 'User model'
+            }
+          ],
+          enums: [],
+          types: [],
+          indexes: []
+        },
+        schema: {} as any,
+        mappings: {} as any
+      }
+
+      const result = parser.parse(mockDMMF)
+      const idField = result.models[0].fields.find((f) => f.name === 'id')
+      
+      expect(idField?.isUpdatedAt).toBe(false) // Should default to false
     })
   })
 

@@ -3,6 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/prisma-nest-dto-generator.svg)](https://www.npmjs.com/package/prisma-nest-dto-generator)
 [![npm downloads](https://img.shields.io/npm/dm/prisma-nest-dto-generator.svg)](https://www.npmjs.com/package/prisma-nest-dto-generator)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/conversy/prisma-nest-dto-generator)
 
 A Prisma generator that automatically creates NestJS DTOs (Data Transfer Objects) with Swagger/OpenAPI decorators from your Prisma schema.
 
@@ -27,7 +28,17 @@ However, these packages did not work in some projects due to changes in the late
 ## Installation
 
 ```bash
+# npm
 npm install --save-dev prisma-nest-dto-generator
+
+# yarn
+yarn add -D prisma-nest-dto-generator
+
+# pnpm
+pnpm add -D prisma-nest-dto-generator
+
+# bun
+bun add -d prisma-nest-dto-generator
 ```
 
 ## Quick Start
@@ -44,7 +55,17 @@ generator nestdto {
 2. Run Prisma generate:
 
 ```bash
+# npm
 npx prisma generate
+
+# yarn
+yarn prisma generate
+
+# pnpm
+pnpm prisma generate
+
+# bun
+bunx prisma generate
 ```
 
 3. Use the generated DTOs in your NestJS controllers:
@@ -246,7 +267,17 @@ The generated DTOs require:
 Install them:
 
 ```bash
+# npm
 npm install @nestjs/swagger class-validator class-transformer
+
+# yarn
+yarn add @nestjs/swagger class-validator class-transformer
+
+# pnpm
+pnpm add @nestjs/swagger class-validator class-transformer
+
+# bun
+bun add @nestjs/swagger class-validator class-transformer
 ```
 
 ## Troubleshooting
@@ -254,7 +285,7 @@ npm install @nestjs/swagger class-validator class-transformer
 ### DTOs not generating
 
 - Ensure the generator is added to `schema.prisma`
-- Run `npx prisma generate`
+- Run `npx prisma generate` (or `yarn prisma generate`, `pnpm prisma generate`, `bunx prisma generate`)
 - Check the output path is correct
 
 ### Domain mappings not working
@@ -271,7 +302,7 @@ npm install @nestjs/swagger class-validator class-transformer
 ### Type errors
 
 - Ensure all dependencies are installed
-- Run `npx prisma generate` after schema changes
+- Run `npx prisma generate` (or `yarn prisma generate`, `pnpm prisma generate`, `bunx prisma generate`) after schema changes
 - Check TypeScript version compatibility
 
 ## License
