@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator nestdto {
+  provider        = "prisma-nest-dto-generator"
+  output          = "./generated"
+  folderStructure = "domain"
+  domainMapping   = "{\"User\": \"users/user\", \"Post\": \"content/post\", \"Comment\": \"content/comment\"}"
+  relations       = "ids"
+  omitFields      = "{\"User\": [\"password\", \"secretKey\"]}"
+  heuristics      = "true"
+  emitBarrel      = "true"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  password    String    // Will be omitted from DTOs
+  secretKey   String?   // Will be omitted from DTOs
+  name        String?
+  role        UserRole  @default(USER)
+  websiteUrl  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  posts       Post[]
+  comments    Comment[]
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  title       String
+  content     String?
+  status      PostStatus @default(DRAFT)
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

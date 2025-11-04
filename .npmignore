@@ -1,0 +1,14 @@
+src/
+**/*.test.ts
+tsconfig.json
+jest.config.js
+.github/
+examples/
+*.log
+.DS_Store
+coverage/
+*.tsbuildinfo
+.env
+.vscode/
+.idea/
+
