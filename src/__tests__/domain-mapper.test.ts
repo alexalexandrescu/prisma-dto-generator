@@ -12,7 +12,7 @@ describe('DomainMapper', () => {
     it('should return correct domain path when mapping provided', () => {
       const domainMapper = new DomainMapper({
         User: 'user-management/user',
-        MediaAsset: 'media/media-asset'
+        Product: 'catalog/product'
       })
 
       expect(domainMapper.getDomainPath('User')).toEqual({
@@ -20,9 +20,9 @@ describe('DomainMapper', () => {
         subfolder: 'user'
       })
 
-      expect(domainMapper.getDomainPath('MediaAsset')).toEqual({
-        domain: 'media',
-        subfolder: 'media-asset'
+      expect(domainMapper.getDomainPath('Product')).toEqual({
+        domain: 'catalog',
+        subfolder: 'product'
       })
     })
 
@@ -40,14 +40,14 @@ describe('DomainMapper', () => {
     it('should return all domains in sorted order', () => {
       const domainMapper = new DomainMapper({
         User: 'user-management/user',
-        MediaAsset: 'media/media-asset',
+        Product: 'catalog/product',
         SystemEvent: 'system/system-event',
-        MeetingAssistantTemplates: 'meeting-assistant/templates'
+        Template: 'templates/template'
       })
 
       const result = domainMapper.getAllDomains()
 
-      expect(result).toEqual(['media', 'meeting-assistant', 'system', 'user-management'])
+      expect(result).toEqual(['catalog', 'system', 'templates', 'user-management'])
     })
 
     it('should return empty array when no mappings provided', () => {
@@ -59,23 +59,23 @@ describe('DomainMapper', () => {
   })
 
   describe('getModelsInDomain', () => {
-    it('should return models in media domain', () => {
+    it('should return models in catalog domain', () => {
       const domainMapper = new DomainMapper({
-        MediaAsset: 'media/media-asset',
-        RichTranscript: 'media/rich-transcript',
-        RichTranscriptSegment: 'media/rich-transcript-segment',
-        RichTranscriptSpeaker: 'media/rich-transcript-speaker',
-        Translation: 'media/translation'
+        Product: 'catalog/product',
+        Category: 'catalog/category',
+        Brand: 'catalog/brand',
+        Review: 'catalog/review',
+        Tag: 'catalog/tag'
       })
 
-      const result = domainMapper.getModelsInDomain('media')
+      const result = domainMapper.getModelsInDomain('catalog')
 
       expect(result).toEqual([
-        'MediaAsset',
-        'RichTranscript',
-        'RichTranscriptSegment',
-        'RichTranscriptSpeaker',
-        'Translation'
+        'Brand',
+        'Category',
+        'Product',
+        'Review',
+        'Tag'
       ])
     })
 
@@ -83,13 +83,13 @@ describe('DomainMapper', () => {
       const domainMapper = new DomainMapper({
         Organization: 'user-management/organization',
         User: 'user-management/user',
-        ZitadelProject: 'user-management/zitadel-project',
-        ZitadelProjectMember: 'user-management/zitadel-project-member'
+        Project: 'user-management/project',
+        ProjectMember: 'user-management/project-member'
       })
 
       const result = domainMapper.getModelsInDomain('user-management')
 
-      expect(result).toEqual(['Organization', 'User', 'ZitadelProject', 'ZitadelProjectMember'])
+      expect(result).toEqual(['Organization', 'Project', 'ProjectMember', 'User'])
     })
 
     it('should return empty array for unknown domain', () => {

@@ -314,8 +314,8 @@ describe('DTOGenerator', () => {
     })
 
     it('should handle multiple models in different domains', () => {
-      const mediaModel: ModelInfo = {
-        name: 'MediaAsset',
+      const productModel: ModelInfo = {
+        name: 'Product',
         fields: [
           {
             name: 'id',
@@ -348,18 +348,18 @@ describe('DTOGenerator', () => {
           folderStructure: 'domain',
           domainMapping: {
             User: 'user-management/user',
-            MediaAsset: 'media/media-asset'
+            Product: 'catalog/product'
           }
         },
         mockEnums
       )
-      const files = domainGenerator.generateDTOs([mockModel, mediaModel])
+      const files = domainGenerator.generateDTOs([mockModel, productModel])
 
       const userCreateFile = files.find((f) => f.fileName === 'create-user.dto.ts')
-      const mediaCreateFile = files.find((f) => f.fileName === 'create-media-asset.dto.ts')
+      const productCreateFile = files.find((f) => f.fileName === 'create-product.dto.ts')
 
       expect(userCreateFile?.folderPath).toBe('user-management/user')
-      expect(mediaCreateFile?.folderPath).toBe('media/media-asset')
+      expect(productCreateFile?.folderPath).toBe('catalog/product')
     })
 
     it('should handle custom domain mapping', () => {

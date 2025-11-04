@@ -104,10 +104,10 @@ describe('Integration Tests', () => {
               documentation: 'User model'
             },
             {
-              name: 'MediaAsset',
-              dbName: 'MediaAsset',
+              name: 'Product',
+              dbName: 'Product',
               schema: 'public',
-              primaryKey: { name: 'MediaAsset_pkey', fields: ['id'] },
+              primaryKey: { name: 'Product_pkey', fields: ['id'] },
               fields: [
                 {
                   name: 'id',
@@ -135,7 +135,7 @@ describe('Integration Tests', () => {
                   hasDefaultValue: false,
                   isGenerated: false,
                   isUpdatedAt: false,
-                  documentation: 'Asset name'
+                  documentation: 'Product name'
                 },
                 {
                   name: 'metadata',
@@ -149,12 +149,12 @@ describe('Integration Tests', () => {
                   hasDefaultValue: false,
                   isGenerated: false,
                   isUpdatedAt: false,
-                  documentation: 'Asset metadata'
+                  documentation: 'Product metadata'
                 }
               ],
               uniqueFields: [],
               uniqueIndexes: [],
-              documentation: 'Media asset model'
+              documentation: 'Product model'
             }
           ],
           enums: [
@@ -196,14 +196,14 @@ describe('Integration Tests', () => {
       expect(userUpdateFile).toBeDefined()
       expect(userReadFile).toBeDefined()
 
-      // Verify MediaAsset DTOs
-      const mediaCreateFile = files.find((f) => f.fileName === 'create-media-asset.dto.ts')
-      const mediaUpdateFile = files.find((f) => f.fileName === 'update-media-asset.dto.ts')
-      const mediaReadFile = files.find((f) => f.fileName === 'read-media-asset.dto.ts')
+      // Verify Product DTOs
+      const productCreateFile = files.find((f) => f.fileName === 'create-product.dto.ts')
+      const productUpdateFile = files.find((f) => f.fileName === 'update-product.dto.ts')
+      const productReadFile = files.find((f) => f.fileName === 'read-product.dto.ts')
 
-      expect(mediaCreateFile).toBeDefined()
-      expect(mediaUpdateFile).toBeDefined()
-      expect(mediaReadFile).toBeDefined()
+      expect(productCreateFile).toBeDefined()
+      expect(productUpdateFile).toBeDefined()
+      expect(productReadFile).toBeDefined()
 
       // Verify enums file
       const enumsFile = files.find((f) => f.fileName === 'enums.ts')
@@ -226,14 +226,14 @@ describe('Integration Tests', () => {
       expect(userReadFile?.content).toContain('createdAt: string')
       expect(userReadFile?.content).toContain('readOnly: true')
 
-      expect(mediaCreateFile?.content).toContain('metadata: Record<string, unknown> | null')
-      expect(mediaCreateFile?.content).toContain('additionalProperties: true')
+      expect(productCreateFile?.content).toContain('metadata: Record<string, unknown> | null')
+      expect(productCreateFile?.content).toContain('additionalProperties: true')
 
       expect(enumsFile?.content).toContain('export enum UserRole')
       expect(enumsFile?.content).toContain("ADMIN = 'ADMIN'")
 
       expect(barrelFile?.content).toContain("export { CreateUserDto } from './create-user.dto'")
-      expect(barrelFile?.content).toContain("export { CreateMediaAssetDto } from './create-media-asset.dto'")
+      expect(barrelFile?.content).toContain("export { CreateProductDto } from './create-product.dto'")
     })
 
     it('should process complete DMMF and generate all DTOs with domain structure', () => {
@@ -280,10 +280,10 @@ describe('Integration Tests', () => {
               documentation: 'User model'
             },
             {
-              name: 'MediaAsset',
-              dbName: 'MediaAsset',
+              name: 'Product',
+              dbName: 'Product',
               schema: 'public',
-              primaryKey: { name: 'MediaAsset_pkey', fields: ['id'] },
+              primaryKey: { name: 'Product_pkey', fields: ['id'] },
               fields: [
                 {
                   name: 'id',
@@ -311,12 +311,12 @@ describe('Integration Tests', () => {
                   hasDefaultValue: false,
                   isGenerated: false,
                   isUpdatedAt: false,
-                  documentation: 'Asset name'
+                  documentation: 'Product name'
                 }
               ],
               uniqueFields: [],
               uniqueIndexes: [],
-              documentation: 'Media asset model'
+              documentation: 'Product model'
             }
           ],
           enums: [],
@@ -337,7 +337,7 @@ describe('Integration Tests', () => {
           folderStructure: 'domain',
           domainMapping: {
             User: 'user-management/user',
-            MediaAsset: 'media/media-asset'
+            Product: 'catalog/product'
           }
         },
         enums
@@ -351,37 +351,37 @@ describe('Integration Tests', () => {
       const userCreateFile = files.find((f) => f.fileName === 'create-user.dto.ts')
       expect(userCreateFile?.folderPath).toBe('user-management/user')
 
-      // Verify MediaAsset DTOs are in media domain
-      const mediaCreateFile = files.find((f) => f.fileName === 'create-media-asset.dto.ts')
-      expect(mediaCreateFile?.folderPath).toBe('media/media-asset')
+      // Verify Product DTOs are in catalog domain
+      const productCreateFile = files.find((f) => f.fileName === 'create-product.dto.ts')
+      expect(productCreateFile?.folderPath).toBe('catalog/product')
 
       // Verify domain barrel files
       const userManagementBarrelFile = files.find(
         (f) => f.fileName === 'index.ts' && f.folderPath === 'user-management'
       )
-      const mediaBarrelFile = files.find((f) => f.fileName === 'index.ts' && f.folderPath === 'media')
+      const catalogBarrelFile = files.find((f) => f.fileName === 'index.ts' && f.folderPath === 'catalog')
       const mainBarrelFile = files.find((f) => f.fileName === 'index.ts' && !f.folderPath)
 
       expect(userManagementBarrelFile).toBeDefined()
-      expect(mediaBarrelFile).toBeDefined()
+      expect(catalogBarrelFile).toBeDefined()
       expect(mainBarrelFile).toBeDefined()
 
       // Verify subfolder barrel files
       const userSubfolderBarrelFile = files.find(
         (f) => f.fileName === 'index.ts' && f.folderPath === 'user-management/user'
       )
-      const mediaSubfolderBarrelFile = files.find(
-        (f) => f.fileName === 'index.ts' && f.folderPath === 'media/media-asset'
+      const productSubfolderBarrelFile = files.find(
+        (f) => f.fileName === 'index.ts' && f.folderPath === 'catalog/product'
       )
 
       expect(userSubfolderBarrelFile).toBeDefined()
-      expect(mediaSubfolderBarrelFile).toBeDefined()
+      expect(productSubfolderBarrelFile).toBeDefined()
 
       // Verify barrel file content
       expect(userManagementBarrelFile?.content).toContain("export * from './user'")
-      expect(mediaBarrelFile?.content).toContain("export * from './media-asset'")
+      expect(catalogBarrelFile?.content).toContain("export * from './product'")
       expect(mainBarrelFile?.content).toContain("export * from './user-management'")
-      expect(mainBarrelFile?.content).toContain("export * from './media'")
+      expect(mainBarrelFile?.content).toContain("export * from './catalog'")
     })
 
     it('should handle complex field types and relationships', () => {
