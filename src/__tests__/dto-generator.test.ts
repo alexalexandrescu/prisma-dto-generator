@@ -510,8 +510,38 @@ describe('DTOGenerator', () => {
     })
 
     it('should not export enums in barrel file when no enums exist', () => {
+      // Create a model without enum fields to avoid enum errors
+      const modelWithoutEnums: ModelInfo = {
+        name: 'Simple',
+        fields: [
+          {
+            name: 'id',
+            type: 'String',
+            isOptional: false,
+            isNullable: false,
+            isArray: false,
+            isUpdatedAt: false,
+            hasDefault: false,
+            isId: true,
+            isRelation: false
+          },
+          {
+            name: 'name',
+            type: 'String',
+            isOptional: false,
+            isNullable: false,
+            isArray: false,
+            isUpdatedAt: false,
+            hasDefault: false,
+            isId: false,
+            isRelation: false
+          }
+        ],
+        enums: []
+      }
+      
       const generator = new DTOGenerator({}, [])
-      const files = generator.generateDTOs([mockModel])
+      const files = generator.generateDTOs([modelWithoutEnums])
       
       const mainBarrelFile = files.find((f) => f.fileName === 'index.ts' && !f.folderPath)
       expect(mainBarrelFile?.content).not.toContain("export * from './enums'")
