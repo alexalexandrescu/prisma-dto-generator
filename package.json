@@ -1,0 +1,55 @@
+{
+  "name": "prisma-nest-dto-generator",
+  "version": "0.0.1",
+  "description": "Prisma generator for NestJS DTOs with Swagger support",
+  "main": "dist/index.js",
+  "bin": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "prepublishOnly": "pnpm build",
+    "preversion": "pnpm test"
+  },
+  "keywords": [
+    "prisma",
+    "generator",
+    "nestjs",
+    "dto",
+    "swagger",
+    "openapi"
+  ],
+  "author": "Conversy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/conversy/prisma-nest-dto-generator.git"
+  },
+  "homepage": "https://github.com/conversy/prisma-nest-dto-generator#readme",
+  "bugs": {
+    "url": "https://github.com/conversy/prisma-nest-dto-generator/issues"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@prisma/generator-helper": "^6.16.3",
+    "@prisma/internals": "^6.16.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^24.6.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.9.3"
+  },
+  "files": [
+    "dist/**/*"
+  ]
+}
