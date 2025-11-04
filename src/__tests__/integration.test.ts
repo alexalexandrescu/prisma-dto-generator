@@ -332,7 +332,16 @@ describe('Integration Tests', () => {
       const { models, enums } = parser.parse(mockDMMF)
 
       // Generate DTOs with domain structure
-      const generator = new DTOGenerator({ folderStructure: 'domain' }, enums)
+      const generator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            User: 'user-management/user',
+            MediaAsset: 'media/media-asset'
+          }
+        },
+        enums
+      )
       const files = generator.generateDTOs(models)
 
       // Verify all expected files are generated (more files due to domain structure)

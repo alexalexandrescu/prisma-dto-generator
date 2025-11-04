@@ -1,50 +1,35 @@
 import { DomainMapper } from '../domain-mapper'
 
 describe('DomainMapper', () => {
-  let domainMapper: DomainMapper
-
-  beforeEach(() => {
-    domainMapper = new DomainMapper()
-  })
-
   describe('getDomainPath', () => {
-    it('should return correct domain path for MediaAsset', () => {
-      const result = domainMapper.getDomainPath('MediaAsset')
+    it('should return null when no mappings provided', () => {
+      const domainMapper = new DomainMapper()
+      const result = domainMapper.getDomainPath('User')
 
-      expect(result).toEqual({
+      expect(result).toBeNull()
+    })
+
+    it('should return correct domain path when mapping provided', () => {
+      const domainMapper = new DomainMapper({
+        User: 'user-management/user',
+        MediaAsset: 'media/media-asset'
+      })
+
+      expect(domainMapper.getDomainPath('User')).toEqual({
+        domain: 'user-management',
+        subfolder: 'user'
+      })
+
+      expect(domainMapper.getDomainPath('MediaAsset')).toEqual({
         domain: 'media',
         subfolder: 'media-asset'
       })
     })
 
-    it('should return correct domain path for User', () => {
-      const result = domainMapper.getDomainPath('User')
-
-      expect(result).toEqual({
-        domain: 'user-management',
-        subfolder: 'user'
-      })
-    })
-
-    it('should return correct domain path for SystemEvent', () => {
-      const result = domainMapper.getDomainPath('SystemEvent')
-
-      expect(result).toEqual({
-        domain: 'system',
-        subfolder: 'system-event'
-      })
-    })
-
-    it('should return correct domain path for MeetingAssistantTemplates', () => {
-      const result = domainMapper.getDomainPath('MeetingAssistantTemplates')
-
-      expect(result).toEqual({
-        domain: 'meeting-assistant',
-        subfolder: 'templates'
-      })
-    })
-
     it('should return null for unknown model', () => {
+      const domainMapper = new DomainMapper({
+        User: 'user-management/user'
+      })
       const result = domainMapper.getDomainPath('UnknownModel')
 
       expect(result).toBeNull()
@@ -53,14 +38,36 @@ describe('DomainMapper', () => {
 
   describe('getAllDomains', () => {
     it('should return all domains in sorted order', () => {
+      const domainMapper = new DomainMapper({
+        User: 'user-management/user',
+        MediaAsset: 'media/media-asset',
+        SystemEvent: 'system/system-event',
+        MeetingAssistantTemplates: 'meeting-assistant/templates'
+      })
+
       const result = domainMapper.getAllDomains()
 
       expect(result).toEqual(['media', 'meeting-assistant', 'system', 'user-management'])
+    })
+
+    it('should return empty array when no mappings provided', () => {
+      const domainMapper = new DomainMapper()
+      const result = domainMapper.getAllDomains()
+
+      expect(result).toEqual([])
     })
   })
 
   describe('getModelsInDomain', () => {
     it('should return models in media domain', () => {
+      const domainMapper = new DomainMapper({
+        MediaAsset: 'media/media-asset',
+        RichTranscript: 'media/rich-transcript',
+        RichTranscriptSegment: 'media/rich-transcript-segment',
+        RichTranscriptSpeaker: 'media/rich-transcript-speaker',
+        Translation: 'media/translation'
+      })
+
       const result = domainMapper.getModelsInDomain('media')
 
       expect(result).toEqual([
@@ -73,12 +80,22 @@ describe('DomainMapper', () => {
     })
 
     it('should return models in user-management domain', () => {
+      const domainMapper = new DomainMapper({
+        Organization: 'user-management/organization',
+        User: 'user-management/user',
+        ZitadelProject: 'user-management/zitadel-project',
+        ZitadelProjectMember: 'user-management/zitadel-project-member'
+      })
+
       const result = domainMapper.getModelsInDomain('user-management')
 
       expect(result).toEqual(['Organization', 'User', 'ZitadelProject', 'ZitadelProjectMember'])
     })
 
     it('should return empty array for unknown domain', () => {
+      const domainMapper = new DomainMapper({
+        User: 'user-management/user'
+      })
       const result = domainMapper.getModelsInDomain('unknown')
 
       expect(result).toEqual([])
@@ -100,11 +117,12 @@ describe('DomainMapper', () => {
       })
     })
 
-    it('should merge custom mapping with default mapping', () => {
-      const customMapping = {
-        CustomModel: 'custom-domain/custom-subfolder'
+    it('should support multiple mappings', () => {
+      const mappings = {
+        CustomModel: 'custom-domain/custom-subfolder',
+        User: 'user-management/user'
       }
-      const mapper = new DomainMapper(customMapping)
+      const mapper = new DomainMapper(mappings)
 
       // Custom mapping should work
       expect(mapper.getDomainPath('CustomModel')).toEqual({
@@ -112,7 +130,7 @@ describe('DomainMapper', () => {
         subfolder: 'custom-subfolder'
       })
 
-      // Default mapping should still work
+      // User mapping should work
       expect(mapper.getDomainPath('User')).toEqual({
         domain: 'user-management',
         subfolder: 'user'
@@ -135,10 +153,17 @@ describe('DomainMapper', () => {
   })
 
   describe('kebabCase conversion', () => {
-    it('should convert PascalCase to kebab-case', () => {
+    it('should use kebab-case for subfolder when not provided', () => {
+      const domainMapper = new DomainMapper({
+        SomeComplexModelName: 'test-domain'
+      })
+
       const result = domainMapper.getDomainPath('SomeComplexModelName')
 
-      expect(result).toBeNull() // Not in default mapping, but kebabCase method should work
+      expect(result).toEqual({
+        domain: 'test-domain',
+        subfolder: 'some-complex-model-name'
+      })
     })
   })
 })

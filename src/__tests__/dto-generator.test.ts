@@ -98,7 +98,15 @@ describe('DTOGenerator', () => {
     })
 
     it('should generate domain structure when folderStructure is domain', () => {
-      const domainGenerator = new DTOGenerator({ folderStructure: 'domain' }, mockEnums)
+      const domainGenerator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            User: 'user-management/user'
+          }
+        },
+        mockEnums
+      )
       const files = domainGenerator.generateDTOs([mockModel])
 
       // Should generate more files due to domain structure
@@ -265,7 +273,15 @@ describe('DTOGenerator', () => {
 
   describe('domain structure', () => {
     it('should generate correct domain barrel file content', () => {
-      const domainGenerator = new DTOGenerator({ folderStructure: 'domain' }, mockEnums)
+      const domainGenerator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            User: 'user-management/user'
+          }
+        },
+        mockEnums
+      )
       const files = domainGenerator.generateDTOs([mockModel])
 
       const domainBarrelFile = files.find((f) => f.fileName === 'index.ts' && f.folderPath === 'user-management')
@@ -280,7 +296,15 @@ describe('DTOGenerator', () => {
     })
 
     it('should generate correct main barrel file content for domain structure', () => {
-      const domainGenerator = new DTOGenerator({ folderStructure: 'domain' }, mockEnums)
+      const domainGenerator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            User: 'user-management/user'
+          }
+        },
+        mockEnums
+      )
       const files = domainGenerator.generateDTOs([mockModel])
 
       const mainBarrelFile = files.find((f) => f.fileName === 'index.ts' && !f.folderPath)
@@ -319,7 +343,16 @@ describe('DTOGenerator', () => {
         enums: []
       }
 
-      const domainGenerator = new DTOGenerator({ folderStructure: 'domain' }, mockEnums)
+      const domainGenerator = new DTOGenerator(
+        {
+          folderStructure: 'domain',
+          domainMapping: {
+            User: 'user-management/user',
+            MediaAsset: 'media/media-asset'
+          }
+        },
+        mockEnums
+      )
       const files = domainGenerator.generateDTOs([mockModel, mediaModel])
 
       const userCreateFile = files.find((f) => f.fileName === 'create-user.dto.ts')
