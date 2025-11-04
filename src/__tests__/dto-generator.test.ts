@@ -621,7 +621,8 @@ describe('DTOGenerator', () => {
             isId: false,
             isRelation: false
           }
-        ]
+        ],
+        enums: []
       }
       const files = generator.generateDTOs([simpleModel])
       
