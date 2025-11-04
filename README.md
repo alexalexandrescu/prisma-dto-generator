@@ -16,6 +16,14 @@ A Prisma generator that automatically creates NestJS DTOs (Data Transfer Objects
 - 🔤 **Enum Support**: Generates TypeScript enums from Prisma enums
 - 🎨 **Customizable**: Extensive configuration options for different use cases
 
+## Inspiration
+
+This package is heavily inspired by:
+- [@brakebein/prisma-generator-nestjs-dto](https://www.npmjs.com/package/@brakebein/prisma-generator-nestjs-dto)
+- [prisma-generator-nestjs-dto](https://www.npmjs.com/package/prisma-generator-nestjs-dto)
+
+However, these packages did not work in some projects due to changes in the latest Prisma and NestJS versions. This package was created as a simplified, modern alternative that works with current versions of Prisma (v6+) and NestJS (v10+).
+
 ## Installation
 
 ```bash
