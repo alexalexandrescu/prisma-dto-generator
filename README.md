@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/prisma-nest-dto-generator.svg)](https://www.npmjs.com/package/prisma-nest-dto-generator)
 [![npm downloads](https://img.shields.io/npm/dm/prisma-nest-dto-generator.svg)](https://www.npmjs.com/package/prisma-nest-dto-generator)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/conversy/prisma-nest-dto-generator)
+![Coverage](./coverage-badge.svg)
 
 A Prisma generator that automatically creates NestJS DTOs (Data Transfer Objects) with Swagger/OpenAPI decorators from your Prisma schema.
 
