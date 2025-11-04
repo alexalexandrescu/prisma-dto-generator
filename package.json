@@ -1,6 +1,6 @@
 {
   "name": "prisma-nest-dto-generator",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Prisma generator for NestJS DTOs with Swagger support",
   "main": "dist/index.js",
   "bin": "dist/index.js",
