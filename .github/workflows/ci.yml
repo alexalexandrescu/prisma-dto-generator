@@ -37,19 +37,31 @@ jobs:
       - name: Run tests with coverage
         run: pnpm test:coverage
 
-      - name: Generate coverage badge
-        uses: tj-actions/coverage-badge@v4
-        with:
-          output: 'coverage-badge.svg'
-          fail_below_min: false
+      - name: Generate coverage JSON for badge
+        if: github.ref == 'refs/heads/main'
+        run: |
+          node -e "
+          const fs = require('fs');
+          const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+          const total = coverage.total;
+          const percentage = Math.round(total.lines.pct);
+          const color = percentage >= 100 ? 'brightgreen' : percentage >= 80 ? 'green' : percentage >= 60 ? 'yellow' : 'red';
+          const coverageData = {
+            schemaVersion: 1,
+            label: 'coverage',
+            message: percentage + '%',
+            color: color
+          };
+          fs.writeFileSync('coverage.json', JSON.stringify(coverageData));
+          "
 
-      - name: Commit coverage badge
+      - name: Commit coverage JSON
         if: github.ref == 'refs/heads/main'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add coverage-badge.svg
-          git commit -m "Update coverage badge" || exit 0
+          git add coverage.json
+          git commit -m "Update coverage badge [skip ci]" || exit 0
           git push
         continue-on-error: true
 
