@@ -10,7 +10,7 @@ The `schema.prisma` file contains 2-3 basic models with common field types.
 
 ```prisma
 generator nestdto {
-  provider   = "prisma-nest-dto-generator"
+  provider   = "@alexcatdad/prisma-dto-generator"
   output     = "./generated"
   emitBarrel  = "true"
 }

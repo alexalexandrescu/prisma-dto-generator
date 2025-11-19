@@ -1,5 +1,5 @@
 {
-  "name": "prisma-nest-dto-generator",
+  "name": "@alexcatdad/prisma-dto-generator",
   "version": "0.0.4",
   "description": "Prisma generator for NestJS DTOs with Swagger support",
   "main": "dist/index.js",
@@ -22,15 +22,15 @@
     "swagger",
     "openapi"
   ],
-  "author": "Conversy",
+  "author": "Alex Alexandrescu <github@escu.dev>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/conversy/prisma-nest-dto-generator.git"
+    "url": "https://github.com/alexcatdad/prisma-dto-generator.git"
   },
-  "homepage": "https://github.com/conversy/prisma-nest-dto-generator#readme",
+  "homepage": "https://github.com/alexcatdad/prisma-dto-generator#readme",
   "bugs": {
-    "url": "https://github.com/conversy/prisma-nest-dto-generator/issues"
+    "url": "https://github.com/alexcatdad/prisma-dto-generator/issues"
   },
   "engines": {
     "node": ">=18.12"

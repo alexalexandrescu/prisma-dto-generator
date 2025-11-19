@@ -3,7 +3,7 @@ generator client {
 }
 
 generator nestdto {
-  provider  = "prisma-nest-dto-generator"
+  provider  = "@alexcatdad/prisma-dto-generator"
   output    = "./src/dto"
   emitBarrel = "true"
 }

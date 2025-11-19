@@ -10,7 +10,7 @@ This example demonstrates advanced configuration with:
 
 ```prisma
 generator nestdto {
-  provider        = "prisma-nest-dto-generator"
+  provider        = "@alexcatdad/prisma-dto-generator"
   output          = "./generated"
   folderStructure = "domain"
   domainMapping   = "{\"User\": \"users/user\", \"Post\": \"content/post\", \"Comment\": \"content/comment\"}"

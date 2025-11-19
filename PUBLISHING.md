@@ -1,6 +1,6 @@
 # Publishing Guide
 
-This guide explains how to publish new versions of `prisma-nest-dto-generator` to npm.
+This guide explains how to publish new versions of `@alexcatdad/prisma-dto-generator` to npm.
 
 ## Pre-Publish Checklist
 
@@ -70,12 +70,12 @@ This will:
 
 ### 5. Verify Publication
 
-1. Check npm: https://www.npmjs.com/package/prisma-nest-dto-generator
+1. Check npm: https://www.npmjs.com/package/@alexcatdad/prisma-dto-generator
 2. Verify version appears correctly
 3. Test installation in a new project:
 
 ```bash
-npm install --save-dev prisma-nest-dto-generator
+npm install --save-dev @alexcatdad/prisma-dto-generator
 ```
 
 ### 6. Push to GitHub
@@ -108,7 +108,7 @@ If something goes wrong:
 1. **Unpublish** (within 72 hours):
 
 ```bash
-npm unpublish prisma-nest-dto-generator@<version>
+npm unpublish @alexcatdad/prisma-dto-generator@<version>
 ```
 
 2. **Publish fixed version**:

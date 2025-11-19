@@ -1,4 +1,4 @@
-# Migration Guide: Extracting prisma-nest-dto-generator to Standalone Repository
+# Migration Guide: Extracting @alexcatdad/prisma-dto-generator to Standalone Repository
 
 This document contains all the information needed to extract this package from the monorepo and set it up as a standalone repository.
 
@@ -7,7 +7,7 @@ This document contains all the information needed to extract this package from t
 ### ✅ Completed
 
 - [x] Removed hardcoded Conversy-specific domain mappings from `domain-mapper.ts`
-- [x] Updated package.json with new name (`prisma-nest-dto-generator`), version (`0.0.1`)
+- [x] Updated package.json with new name (`@alexcatdad/prisma-dto-generator`), version (`0.0.1`)
 - [x] Added publish configuration (public access, repository URLs)
 - [x] Created comprehensive documentation (README.md, CONTRIBUTING.md, CHANGELOG.md, PUBLISHING.md)
 - [x] Created LICENSE file (MIT)
@@ -29,7 +29,7 @@ This document contains all the information needed to extract this package from t
 - `src/types.ts` - TypeScript type definitions
 
 **Configuration:**
-- `package.json` - Package metadata (name: `prisma-nest-dto-generator`, version: `0.0.1`)
+- `package.json` - Package metadata (name: `@alexcatdad/prisma-dto-generator`, version: `0.0.1`)
 - `tsconfig.json` - TypeScript configuration
 - `biome.json` - Linting/formatting configuration
 - `jest.config.js` - Test configuration
@@ -56,20 +56,20 @@ This document contains all the information needed to extract this package from t
 
 ```bash
 # Create new repo on GitHub
-gh repo create prisma-nest-dto-generator --public --description "Prisma generator for NestJS DTOs with Swagger support"
+gh repo create @alexcatdad/prisma-dto-generator --public --description "Prisma generator for NestJS DTOs with Swagger support"
 
 # Clone and initialize
-git clone git@github.com:conversy/prisma-nest-dto-generator.git
-cd prisma-nest-dto-generator
+git clone git@github.com:conversy/@alexcatdad/prisma-dto-generator.git
+cd @alexcatdad/prisma-dto-generator
 ```
 
 ### 2. Copy Package Files
 
-Copy the entire `packages/prisma-nest-dto-generator` directory to the new repo:
+Copy the entire `packages/@alexcatdad/prisma-dto-generator` directory to the new repo:
 
 ```bash
 # From monorepo root
-cp -r packages/prisma-nest-dto-generator/* /path/to/new-repo/
+cp -r packages/@alexcatdad/prisma-dto-generator/* /path/to/new-repo/
 ```
 
 **Files to copy:**
@@ -101,11 +101,11 @@ Update `package.json` repository URLs if they differ:
 {
   "repository": {
     "type": "git",
-    "url": "https://github.com/conversy/prisma-nest-dto-generator.git"
+    "url": "https://github.com/conversy/@alexcatdad/prisma-dto-generator.git"
   },
-  "homepage": "https://github.com/conversy/prisma-nest-dto-generator#readme",
+  "homepage": "https://github.com/conversy/@alexcatdad/prisma-dto-generator#readme",
   "bugs": {
-    "url": "https://github.com/prisma-nest-dto-generator/issues"
+    "url": "https://github.com/@alexcatdad/prisma-dto-generator/issues"
   }
 }
 ```
@@ -116,10 +116,10 @@ Update `package.json` repository URLs if they differ:
 # Initialize git
 git init
 git add .
-git commit -m "Initial commit: Extract prisma-nest-dto-generator from monorepo"
+git commit -m "Initial commit: Extract @alexcatdad/prisma-dto-generator from monorepo"
 
 # Set up remote
-git remote add origin git@github.com:conversy/prisma-nest-dto-generator.git
+git remote add origin git@github.com:conversy/@alexcatdad/prisma-dto-generator.git
 git branch -M main
 git push -u origin main
 ```
@@ -164,7 +164,7 @@ After publishing, update `apps/api/prisma/schema.prisma`:
 
 ```prisma
 generator nestdto {
-  provider        = "prisma-nest-dto-generator"  // Use published package name
+  provider        = "@alexcatdad/prisma-dto-generator"  // Use published package name
   output          = "./dto"
   emitBarrel      = "true"
   relations       = "ids"
@@ -179,7 +179,7 @@ And install the package:
 
 ```bash
 cd apps/api
-pnpm add -D prisma-nest-dto-generator
+pnpm add -D @alexcatdad/prisma-dto-generator
 ```
 
 ## Testing the Package
@@ -201,7 +201,7 @@ You can test the package locally before publishing:
 3. **Use it in another project:**
    ```bash
    cd /path/to/test-project
-   npm link prisma-nest-dto-generator
+   npm link @alexcatdad/prisma-dto-generator
    ```
 
 4. **Test generation:**
@@ -214,12 +214,12 @@ You can test the package locally before publishing:
 The API package currently uses a local file path:
 
 ```prisma
-provider = "../../packages/prisma-nest-dto-generator/dist/index.js"
+provider = "../../packages/@alexcatdad/prisma-dto-generator/dist/index.js"
 ```
 
 After publishing, change to:
 ```prisma
-provider = "prisma-nest-dto-generator"
+provider = "@alexcatdad/prisma-dto-generator"
 ```
 
 ## Publishing Checklist
@@ -396,9 +396,9 @@ If Prisma can't find the generator:
 
 ## Contact / Support
 
-- Repository: https://github.com/conversy/prisma-nest-dto-generator
-- Issues: https://github.com/conversy/prisma-nest-dto-generator/issues
-- NPM: https://www.npmjs.com/package/prisma-nest-dto-generator
+- Repository: https://github.com/conversy/@alexcatdad/prisma-dto-generator
+- Issues: https://github.com/conversy/@alexcatdad/prisma-dto-generator/issues
+- NPM: https://www.npmjs.com/package/@alexcatdad/prisma-dto-generator
 
 ## Notes
 

@@ -1,7 +1,7 @@
-# prisma-nest-dto-generator
+# @alexcatdad/prisma-dto-generator
 
-[![npm version](https://img.shields.io/npm/v/prisma-nest-dto-generator.svg)](https://www.npmjs.com/package/prisma-nest-dto-generator)
-[![npm downloads](https://img.shields.io/npm/dm/prisma-nest-dto-generator.svg)](https://www.npmjs.com/package/prisma-nest-dto-generator)
+[![npm version](https://img.shields.io/npm/v/@alexcatdad/prisma-dto-generator.svg)](https://www.npmjs.com/package/@alexcatdad/prisma-dto-generator)
+[![npm downloads](https://img.shields.io/npm/dm/@alexcatdad/prisma-dto-generator.svg)](https://www.npmjs.com/package/@alexcatdad/prisma-dto-generator)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/alexalexandrescu/prisma-dto-generator/main/coverage.json)
 
@@ -29,16 +29,16 @@ However, these packages did not work in some projects due to changes in the late
 
 ```bash
 # npm
-npm install --save-dev prisma-nest-dto-generator
+npm install --save-dev @alexcatdad/prisma-dto-generator
 
 # yarn
-yarn add -D prisma-nest-dto-generator
+yarn add -D @alexcatdad/prisma-dto-generator
 
 # pnpm
-pnpm add -D prisma-nest-dto-generator
+pnpm add -D @alexcatdad/prisma-dto-generator
 
 # bun
-bun add -d prisma-nest-dto-generator
+bun add -d @alexcatdad/prisma-dto-generator
 ```
 
 ## Quick Start
@@ -47,7 +47,7 @@ bun add -d prisma-nest-dto-generator
 
 ```prisma
 generator nestdto {
-  provider = "prisma-nest-dto-generator"
+  provider = "@alexcatdad/prisma-dto-generator"
   output   = "./dto"
 }
 ```
@@ -94,7 +94,7 @@ export class UserController {
 
 ```prisma
 generator nestdto {
-  provider        = "prisma-nest-dto-generator"
+  provider        = "@alexcatdad/prisma-dto-generator"
   output          = "./dto"
   emitBarrel      = "true"           // Generate index.ts barrel file
   relations       = "ids"             // How to handle relations: "omit" | "ids" | "nested"
@@ -108,7 +108,7 @@ generator nestdto {
 
 ```prisma
 generator nestdto {
-  provider        = "prisma-nest-dto-generator"
+  provider        = "@alexcatdad/prisma-dto-generator"
   output          = "./dto"
   folderStructure = "domain"
   domainMapping   = "./dto-domain-mapping.json"
@@ -159,7 +159,7 @@ Then reference it in your schema:
 
 ```prisma
 generator nestdto {
-  provider        = "prisma-nest-dto-generator"
+  provider        = "@alexcatdad/prisma-dto-generator"
   output          = "./dto"
   folderStructure = "domain"
   domainMapping   = "./dto-domain-mapping.json"

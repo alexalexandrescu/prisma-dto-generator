@@ -1,20 +1,20 @@
 # Quick Start Guide
 
 ## Current Location
-Monorepo: `packages/prisma-nest-dto-generator/`
+Monorepo: `packages/@alexcatdad/prisma-dto-generator/`
 
 ## Quick Extraction Commands
 
 ```bash
 # 1. Create new repo (adjust org/name as needed)
-gh repo create prisma-nest-dto-generator --public
+gh repo create @alexcatdad/prisma-dto-generator --public
 
 # 2. Clone it
-git clone git@github.com:conversy/prisma-nest-dto-generator.git
-cd prisma-nest-dto-generator
+git clone git@github.com:conversy/@alexcatdad/prisma-dto-generator.git
+cd @alexcatdad/prisma-dto-generator
 
 # 3. Copy files from monorepo (run from monorepo root)
-cp -r packages/prisma-nest-dto-generator/* /path/to/prisma-nest-dto-generator/
+cp -r packages/@alexcatdad/prisma-dto-generator/* /path/to/@alexcatdad/prisma-dto-generator/
 
 # 4. Remove monorepo-specific files
 rm -rf node_modules dist

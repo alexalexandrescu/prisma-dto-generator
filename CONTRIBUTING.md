@@ -1,4 +1,4 @@
-# Contributing to prisma-nest-dto-generator
+# Contributing to @alexcatdad/prisma-dto-generator
 
 Thank you for your interest in contributing! This document provides guidelines for contributing to the project.
 
@@ -7,8 +7,8 @@ Thank you for your interest in contributing! This document provides guidelines f
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/conversy/prisma-nest-dto-generator.git
-cd prisma-nest-dto-generator
+git clone https://github.com/conversy/@alexcatdad/prisma-dto-generator.git
+cd @alexcatdad/prisma-dto-generator
 ```
 
 2. **Install dependencies**
